@@ -1,10 +1,12 @@
 ---
 title: "A Markov Text Model"
-Author: "Yile Shi, Letian Yin, Danni Chen"
-Date: "29th Sep 2021"
+Author: Yile Shi, Letian Yin, Danni Chen
+Date: 29th Sep 2021
 output:
-  pdf_document: default
+  html_document:
+    df_print: paged
   html_notebook: default
+  pdf_document: default
 ---
 
 ## Change working dictionary and read file to R
@@ -15,7 +17,7 @@ n_Bible <-length(Bible)
 Bible <- Bible[-((n_Bible - 2909) : n_Bible)] ## strip license
 Sys.setlocale('LC_ALL', 'English_United States.1252')
 ```
-## create function split_punct() to seperate punctuation marks and words
+## Create function split_punct() to seperate punctuation marks and words
 ```{r}
 split_punct <- function(vec){
   index_punct <- NULL
@@ -23,13 +25,14 @@ split_punct <- function(vec){
   n_index = NULL
   for (i in 1 : length(punct)) {
     index_punct[[i]]<- grep(punct[i], vec, fixed = TRUE)
-    n_index[i] = length(index_punct[i])
+    n_index[i] = length(index_punct[[i]])
   }
-  n_index
-  return(index_punct)
+  cat("The number of words with different punctuations should be:", n_index, collapse = "\n")
+  index_punct
 }
 ```
 
+## Use split_punct() to get 
 ```{r}
 split_punct(Bible)
 ```
