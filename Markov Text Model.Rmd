@@ -1,20 +1,21 @@
 ---
 title: "A Markov Text Model"
-Author: Yile Shi, Letian Yin, Danni Chen
-Date: 29th Sep 2021
+Author: "Yile Shi, Letian Yin, Danni Chen"
+Date: "29th Sep 2021"
 output:
   pdf_document: default
   html_notebook: default
 ---
-#Change working dictionary and read file to R
+
+## Change working dictionary and read file to R
 ```{r}
 setwd("E:/Edi/StP/StP-practical_1-Gourp_8")
 Bible <- scan(file = "Bible.txt", what = "character", skip = 156)
 n_Bible <-length(Bible)
 Bible <- Bible[-((n_Bible - 2909) : n_Bible)] ## strip license
-Sys.setlocale('LC_ALL','C')
+Sys.setlocale('LC_ALL', 'English_United States.1252')
 ```
-#create function split_punct() to seperate punctuation marks and words
+## create function split_punct() to seperate punctuation marks and words
 ```{r}
 split_punct <- function(vec){
   index_punct <- NULL
