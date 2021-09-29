@@ -2,7 +2,9 @@
 title: "Markov Text Model"
 author: "Yile Shi, Letian Yin and Danni Chen"
 date: "2021/9/30"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ## Change working dictionary and read file to R
