@@ -11,7 +11,7 @@ output:
 ```{r}
 setwd("E:/Edi/StP/StP-practical_1-Gourp_8")
 Bible <- scan(file = "Bible.txt", what = "character", skip = 156)
-n_Bible <-length(Bible)
+n_Bible <- length(Bible)
 Bible <- Bible[-((n_Bible - 2909) : n_Bible)] ## strip license
 Sys.setlocale('LC_ALL', 'English_United States.1252')
 ```
