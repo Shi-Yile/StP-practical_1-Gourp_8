@@ -1,36 +1,45 @@
-## Step 3
-# Change working dictionary and read file to R
+# Group8 members: Yile Shi(s2168022), Danni Chen(s2227278), Letian Yin(s2179686)
+
+## Step 1 - Create a repo on github and clone to my laptop(on Git Bash):
+# cd /e/Edi/StP
+# git clone https://github.com/Shi-Yile/StP-practical_1-Gourp_8.git
+
+
+## Step 2 - Download the text as plain text from given site
+
+
+## Step 3 - Change working dictionary and read file to R:
+# "fileEncoding = 'UTF-8'" option is used to prevent error codes in Bible text. As a result ,"skip = 156" option should be change into "skip = 157", or it will read "Genesis Chapter 1 " into R. 
+
 setwd("E:/Edi/StP/StP-practical_1-Gourp_8")
 Bible <- scan(file = "Bible.txt", what = "character", skip = 157, fileEncoding = "UTF-8")
 n_Bible <- length(Bible)
 Bible <- Bible[-((n_Bible - 2909) : n_Bible)]
-Sys.setlocale('LC_ALL', 'English_United States.1252')
+#Sys.setlocale('LC_ALL', 'English_United States.1252')
 
-## Step 4
-# Create function split_punct() to seperate punctuation marks and words
+
+## Step 4 - Create function split_punct() to separate punctuation marks and words:
+# Use grep() to get the indices of words with punctuations at the end of them. Calculate indices of punctuations in new vector; Use gsub() to replace punctuations with "" and then put in words and punctuations accordingly.
+
 split_punct <- function(text){
-  # index_punct <- NULL
-  # punct <- c(",$", "\\.$", ";$", "!$", ":$", "\\?$")
-  # for (i in 1 : length(punct)) {
-  #   index_punct[[i]]<- grep(punct[i], text)
-  # }
-  # index_punct <- sort(unlist(index_punct, use.names = FALSE))
   index_punct <- grep("[,$, \\.$, ;$, !$, :$, \\?$]", text, fixed = FALSE )
   index_punct_new <- index_punct + 1:length(index_punct)
   text_new <- rep(" ", length(index_punct) + length(text))
   text_new[index_punct_new] <- substr(text[index_punct], nchar(text)[index_punct], nchar(text)[index_punct])
   text_word <- gsub("[,$, \\.$, ;$, !$, :$, \\?$]", "", text, fixed = FALSE)
-  #text_new[index_punct_new - 1] <- substr(text[index_punct], 1, nchar(text)[index_punct] - 1)
   text_new[-index_punct_new] <- text_word
   return(text_new)
 }
 
-## Step 5
-# Use split_punct() to get new text
+
+## Step 5 - Use split_punct() to get new Bible text:
+
 Bible_new <- split_punct(Bible)
 
-## Step 6
-# Find 1000 most common words and store them in vector b
+
+## Step 6 - Find 1000 most common words and store them in vector b:
+# Translate all words in new Bible text into lower case. Duplicate new Bible text and count frequency of each unique word. Set a threshold of 1000 and create vector b to store 1000 most common words.
+
 b <- NULL
 Bible_lower <- tolower(Bible_new)
 Bible_unique <- unique(Bible_lower)
@@ -40,30 +49,46 @@ threshold <- head(sort(appearance, decreasing = TRUE),1000)[1000]
 loc_1000 <- which(appearance >= threshold)
 b <- Bible_unique[loc_1000]
 
-## Step 7 
-# Create a index matrix whose 1st col is the index of each common words and 2nd col is the index of corresponding following words
+
+## Step 7 - Create matrix A, A[i, j] is the probability of ith word followed by jth word in vector b:
+# Create an index matrix whose 1st col is the index of each common words and 2nd col is the index of corresponding following words in new Bible text. Drop rows with NA in the index matrix. Use loop to put the frequency of ith word followed by jth word in b into A and standardize it to get a probability matrix.
+
 index_b <- match(Bible_lower, b)
 index_bind <- cbind(index_b[1 : length(index_b) - 1], index_b[2 : length(index_b)])
 narows_b <- which(is.na(rowSums(index_bind) == TRUE))
 index_bind <- index_bind[-narows_b,]
-# Create matrix A 
 A <-matrix(0, nrow = length(b), ncol = length(b))
 row_bind <- nrow(index_bind)
 for (i in 1 : row_bind){
   A[index_bind[i, 1], index_bind[i, 2]] = A[index_bind[i, 1], index_bind[i, 2]] + 1
 }
 rownames(A) <- b
-rownames(A) <- b
-# Standardize A 
+colnames(A) <- b
 A <- A/rowSums(A)
 
-## Step 8
-# Create a simulate 50-word section from the model
+
+## Step 8 - Simulate
+# Create a simulate 50-word section from the model based on probability in A. Print out corresponding text
+
 index_text <- rep(0, 50)
 index_text[1] <- sample(1 : length(b) - 50, size = 1)
 for (i in 2 : 50){
   index_text[i] <- sample(1 : length(b), size = 1, prob = A[index_text[i - 1], ])
 }
 text <- b[index_text]
-#Print out corresponding text
+cat(text)
+
+
+## Step 9 - Modify words in simulation that most often start with a capital letter in Bible:
+# Use a loop to get the words in simulation from new Bible text, calculate the frequencies of each word with a capital letter at start or not, and then compare the frequencies in pairs. Finally replace the words in simulation text with more frequent ones. 
+
+for (i in (1 : length(text))){
+  index_i <- which(b[index_text[i]] == Bible_lower)
+  word_i <- unique(Bible_new[index_i])
+  word_i_freq <- tabulate(as.factor(Bible_new[index_i]))
+  index_word_max <- which(word_i_freq == max(word_i_freq))
+  if (text[i] != word_i[index_word_max]){
+    text[i] <- paste(word_i[index_word_max], "*", sep = "")
+  }
+}
 cat(text)
