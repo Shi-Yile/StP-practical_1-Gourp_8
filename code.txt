@@ -9,13 +9,14 @@
 
 
 ## Step 3 - Change working dictionary and read file to R:
-# "fileEncoding = 'UTF-8'" option is used to prevent error codes in Bible text. As a result ,"skip = 156" option should be change into "skip = 157", or it will read "Genesis Chapter 1 " into R. 
+# "fileEncoding = 'UTF-8'" option can be used to prevent error codes in Bible text when default language of system is not English. As a result ,"skip = 156" option should be change into "skip = 157", or it will read "Genesis Chapter 1 " into R. Sys.setlocale() has the similar use to prevent NA when using grep().
 
 setwd("E:/Edi/StP/StP-practical_1-Gourp_8")
-Bible <- scan(file = "Bible.txt", what = "character", skip = 157, fileEncoding = "UTF-8")
+Bible <- scan(file = "Bible.txt", what = "character", skip = 156)
+# Bible <- scan(file = "Bible.txt", what = "character", skip = 157, fileEncoding = "UTF-8")
 n_Bible <- length(Bible)
 Bible <- Bible[-((n_Bible - 2909) : n_Bible)]
-#Sys.setlocale('LC_ALL', 'English_United States.1252')
+# Sys.setlocale('LC_ALL', 'English_United States.1252')
 
 
 ## Step 4 - Create function split_punct() to separate punctuation marks and words:
